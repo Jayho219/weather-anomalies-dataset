@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Flask Project</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            border: 2px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Temperature Prediction</h2>
+        <div>
+            <label for="dateInput">Select Date Range:</label>
+            <input type="date" id="dateInput" name="dateInput" min="2023-11-19" max="2028-11-19" required>
+        </div>
+        <div>
+            <label for="stationInput">Select Station:</label>
+            <select id="stationInput" name="stationInput" required>
+                <option value="station1">Station 1</option>
+                <option value="station2">Station 2</option>
+                <option value="station3">Station 3</option>
+            </select>
+        </div>
+        <div id="temperatureDisplay">
+
+        </div>
+        <button onclick="submitForm()">Submit</button>
+    </div>
+
+<script>
+    async function submitForm() {
+        // Extract input data
+        var dateInputValue = document.getElementById("dateInput").value;
+        var stationInputValue = document.getElementById("stationInput").value;
+
+        // Prepare data for sending to the backend (you can customize this based on your needs)
+        var formData = {
+            date: dateInputValue,
+            station: stationInputValue
+        };
+
+        console.log(formData);
+
+        try {
+            // Send data to Flask backend using fetch and POST method
+            const response = await fetch('/getTemperature', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json',},
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            // Handle the response from the backend if needed
+            console.log('Success:', data);
+            displayTemperature(data.temperature);
+        } 
+        catch (error) {
+            console.error('Error:', error);
+            // Handle errors or display a user-friendly message
+        }
+    }
+
+    function displayTemperature(temperature) {
+        var temperatureElement = document.getElementById("temperatureDisplay");
+        temperatureElement.innerHTML = `Temperature is ${temperature}`;
+    }
+</script>
+
+</body>
+</html>
